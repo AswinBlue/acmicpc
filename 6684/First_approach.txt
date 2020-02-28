@@ -1,0 +1,212 @@
+//https://www.acmicpc.net/problem/6684
+//Hexagonal Routes
+#include<iostream>
+
+using namespace std;
+
+//axis x: ¢Ù
+//axis y: ¢Ö
+//axis z: ¡è
+class Coordinate {
+public:
+	int x;
+	int y;
+	int z;
+};
+
+int main() {
+	cin.tie(NULL);
+	ios::sync_with_stdio(false);
+
+	while (true) {
+		int a, b;
+		cin >> a >> b;
+
+		if (a == 0 && b == 0)
+			break;
+
+		if (a > b) {
+			int tmp = a;
+			a = b;
+			b = tmp;
+		}
+
+		// ¥Òi = p
+		// 6 * p + 1 = 1,7,19, ... (cells under 'number 1' cell)
+		// i_a will be distance from cell 1 to cell a
+		// p_a will be biggest number cell which has same distance (from 1 to the cell) with a
+		// i_b, p_b are same as above
+		int i_a = 0, p_a = 0, p_b, i_b;
+		for (p_b = 0, i_b = 1; 6 * p_b + 1 < b; p_b += p_b + i_b, ++i_b) {
+			if (a <= 6 * p_b + 1) {
+				i_a = i_b;
+				p_a = p_b;
+			}
+		}
+
+		//calculate coordination of a
+		int diff = a - p_a;
+		int tmp = diff / i_a;
+		Coordinate A;
+		A.x = 0;
+		A.y = 0;
+		A.z = 0;
+
+		if (tmp == 0) {
+			A.x -= diff % i_a;
+		}
+		if (tmp > 0) {
+			A.x -= i_a;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			A.z += diff % i_a;
+		}
+		if (tmp > 0) {
+			A.z += i_a;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			A.y += diff % i_a;
+		}
+		if (tmp > 0) {
+			A.y += i_a;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			A.x += diff % i_a;
+		}
+		if (tmp > 0) {
+			A.x += i_a;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			A.z -= diff % i_a;
+		}
+		if (tmp > 0) {
+			A.z -= i_a;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			A.y -= diff % i_a;
+		}
+
+		//(-n,n,0) = (0,0,n)
+		//(n,0,n) = (0,n,0)
+		//(0,-n,-n) = (n,0,0)
+
+		//make 'z' 0
+		if (A.z < 0) {
+			A.x -= A.z;
+			A.y += A.z;
+			A.z = 0;
+		}
+
+		//calculate coordination of b
+		diff = b - p_b;
+		tmp = diff / i_b;
+		Coordinate B;
+		B.x = 0;
+		B.y = 0;
+		B.z = 0;
+
+		if (tmp == 0) {
+			B.x -= diff % i_b;
+		}
+		if (tmp > 0) {
+			B.x -= i_b;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			B.z += diff % i_b;
+		}
+		if (tmp > 0) {
+			B.z += i_b;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			B.y += diff % i_b;
+		}
+		if (tmp > 0) {
+			B.y += i_b;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			B.x += diff % i_b;
+		}
+		if (tmp > 0) {
+			B.x += i_b;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			B.z -= diff % i_b;
+		}
+		if (tmp > 0) {
+			B.z -= i_b;
+			tmp--;
+		}
+
+		if (tmp == 0) {
+			B.y -= diff % i_b;
+		}
+
+		//(-n,n,0) = (0,0,n)
+		//(n,0,n) = (0,n,0)
+		//(0,-n,-n) = (n,0,0)
+
+		//make 'z' 0
+		if (B.z < 0) {
+			B.x -= B.z;
+			B.y += B.z;
+			B.z = 0;
+		}
+
+		int X = A.x - B.x;
+		int Y = A.y - B.y;
+		int Z = 0;
+
+		//make absolute value of X,Y,Z smallest
+		//use (-n,n,0) = (0,0,n) , (n,-n,0) = (0,0,-n)
+		if (X < 0 && Y > 0) {
+			if (abs(X) > abs(Y)) {
+				Z += Y;
+				X += Y;
+				Y = 0;
+			}
+			else {
+				Z -= X;
+				Y += X;
+				X = 0;
+			}
+		}
+		else if (X > 0 && Y < 0) {
+			if (abs(X) > abs(Y)) {
+				Z += Y;
+				X += Y;
+				Y = 0;
+			}
+			else {
+				Z -= X;
+				Y += X;
+				X = 0;
+			}
+		}
+
+		int length = abs(X) + abs(Y) + abs(Z);
+		int route=1;
+		for (int i = length; i > 0; --i) {
+			route *= i;
+		}
+
+		cout << "There is " << route << " route of the shortest length " << length << ".\n";
+	}
+}

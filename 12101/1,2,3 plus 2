@@ -1,0 +1,56 @@
+# 1 2 3을 더해 n이 되는 식 중 사전 순으로 k번째 찾기
+# DFS로 찾아나간다.
+# 1) 1, 2, 3 순서로 붙여서 합이 n이 되는지 확인
+# 2) 합이 n이 된다면 cnt 1 증가
+# 3) cnt가 k가 되는 순간의 배열 모두 result에 추가
+# 4) result 출력
+
+
+class Main:
+    result = []
+    cnt = 0
+    n = 0
+    k = 0
+
+    # recursive searching function
+    def find_k(self, cur):
+        # do until 'cur' == 'n'
+        if cur == self.n:
+            self.cnt += 1
+            if self.cnt == self.k:
+                return True
+
+            # if 'cur' == 'n' but 'cnt' != 'k', drop
+            return False
+
+        # if 'cur' > 'n', drop
+        if cur > self.n:
+            return False
+
+        # push to 'result' if 'k'th formula found
+        if self.find_k(cur + 1) is True:
+            self.result.insert(0, 1)
+            return True
+
+        if self.find_k(cur + 2) is True:
+            self.result.insert(0, 2)
+            return True
+
+        if self.find_k(cur + 3) is True:
+            self.result.insert(0, 3)
+            return True
+
+    # get input, start searching, print result
+    def do(self):
+        self.n, self.k = map(int, input().split())
+        if self.find_k(0) == True:
+            for i in self.result[:-1]:
+                print(i, end='+')
+            print(self.result[-1])
+        else:
+            print(-1)
+
+
+if __name__ == '__main__':
+    m = Main()
+    m.do()

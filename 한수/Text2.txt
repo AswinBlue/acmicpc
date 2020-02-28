@@ -1,0 +1,99 @@
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+int main(void)
+{
+	int N, cnt;
+	int a, b, c;
+	ofstream out;
+	out.open("result1.txt");
+
+	for (N = 0; N < 1000; ++N) {
+		if (N < 100)
+		{
+			out << N << endl;
+		}
+		else
+		{
+			cnt = 99;
+			for (int i = 100; i <= N; i++)
+			{
+				a = i / 100;        // 100의 자리
+				b = (i / 10) % 10;    // 10의 자리
+				c = i % 10;            // 1의 자리
+
+				if ((a - b) == (b - c))
+				{
+					cnt++;
+				}
+			}
+			out << cnt << endl;
+		}
+	}
+
+	ofstream out2;
+	out2.open("result2.txt");
+
+	for (int num = 0; num < 1000; ++num) {
+		if (num > 999)
+			num = 999;
+		int a, b, c;
+		a = num / 100;
+		b = (num % 100) / 10;
+		c = num % 10;
+
+		int cnt = 0;
+
+
+		if (num < 100) {
+			cnt += num;
+			if (cnt == 0)
+				cnt = 1;
+		}
+		else {
+			cnt += 99;
+			//a00 ~ abc
+			for (int i = 0; i < 5; ++i) {//i를 등차로 하는 등차수열의 존재 여부 판별
+										 //음수 등차
+				int A = a - i;
+				if (A >= 0 && A == b) {
+					A -= i;
+					if (A >= 0 && A <= c) {
+						cnt++;
+					}
+				}
+				else if (A < b && A - i >= 0) {
+					cnt++;
+				}
+
+				//중복 계산 방지
+				if (i == 0)
+					continue;
+
+				//양수 등차
+				A = a + i;
+				if (A < 10 && A == b) {
+					A += i;
+					if (A < 10 && A <= c) {
+						cnt++;
+					}
+				}
+				else if (A < 10 && A < b)
+					cnt++;
+			}
+
+			//100 ~ a00 - 1
+			for (int i = 1; i < a; ++i) {
+				++cnt;//등차 0
+				cnt += i / 2;//음수 등차
+				cnt += (9 - i) / 2;//양수 등차
+			}
+		}
+		out2 << cnt << endl;
+	}
+	out.close();
+	out2.close();
+	return 0;
+}

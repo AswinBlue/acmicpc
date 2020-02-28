@@ -1,0 +1,81 @@
+//https://www.acmicpc.net/problem/3745
+//¿À¸§¼¼
+#include<iostream>
+#include<string>
+#include<queue>
+using namespace std;
+#define MAX 100000
+int main(void)
+{
+	int num;
+	string in = to_string(MAX);
+	int previous, current;
+	int stat;
+	int max;
+	int *arr;
+	queue<int> index;
+
+	while (getline(cin, in)){
+		num = atoi(in.c_str());
+		if (num != 0)
+			max = 1;
+		else
+			max = 0;
+		stat = 1;
+		
+		arr = new int[num];
+
+		previous = MAX;
+		for (int i = 0; i < num; ++i) {
+			cin >> current;
+			arr[i] = current;
+			if (current > previous) {
+				//++stat;
+				//if (max < stat)
+				//	max = stat;
+			}
+			else {
+				//stat = 1;
+				index.push(i);
+			}
+			previous = current;
+		}
+
+		int k = index.front();
+		index.pop();
+		int min = arr[k];
+		previous = MAX;
+		for (int i = 0; i < k; ++i) {
+			current = arr[i];
+			if (current < previous) {
+				if(current < min)
+					++stat;
+			}
+			previous = current;
+		}
+		for (int i = k; i < num; ++i) {
+			current = arr[i];
+			if (current < previous) {
+				++stat;
+			}
+			previous = current;
+		}
+
+
+
+
+
+
+
+
+
+
+
+		cout << max << endl;
+		if(max!=0)
+			getline(cin, in);
+
+		delete arr;
+
+	}
+}

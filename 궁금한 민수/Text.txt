@@ -1,0 +1,150 @@
+//https://www.acmicpc.net/problem/1507
+
+#include<iostream>
+
+using namespace std;
+
+class road {
+public:
+	road(int A, int B, int w) {
+		this->A = A;
+		this->B = B;
+		this->weight = w;
+	}
+	int A;
+	int B;
+	int weight;
+};
+
+road** R;//heap
+int R_idx = 0;
+int *djs;//disjoint set
+
+void push_heap(int a, int b, int w) {
+	road* tmp = new road(a, b, w);
+
+	if (R_idx < 1) {
+		R[1] = tmp;
+		R_idx++;
+		return;
+	}
+
+	R_idx++;
+	int i = R_idx;
+	while (R[i / 2]->weight > w) {
+		R[i] = R[i / 2];
+		i /= 2;
+		if (i < 2) {
+			i = 1;
+			break;
+		}
+	}
+	R[i] = tmp;
+}
+road* pop_heap() {
+	R_idx--;
+	road* result = R[1];
+	road* tmp = R[R_idx + 1];
+
+	int i = 1;
+	while (i * 2 <= R_idx) {
+		i *= 2;
+		//have to do 'right side' first
+		//right
+		if (R[i]->weight > R[i + 1]->weight && i < R_idx) {
+			i++;
+			if (R[i]->weight < tmp->weight) {
+				R[i / 2] = R[i];
+			}
+			else {
+				i /= 2;
+				break;
+			}
+		}
+		//left child
+		else {
+			if (R[i]->weight < tmp->weight) {
+				R[i / 2] = R[i];
+			}
+			else {
+				i /= 2;
+				break;
+			}
+		}
+		//right child
+	}
+
+	R[i] = tmp;
+
+	return result;
+}
+int djs_find_root(int t) {
+	int i = t;
+	while (djs[i] > 0) {
+		i = djs[i];
+	}
+	int root = i;
+
+	//collapsing find
+	i = t;
+	while (djs[i] > 0) {
+		djs[i] = root;
+		i = djs[i];
+	}
+
+	return root;
+}
+void djs_combine(int a, int b) {
+	int A, B;
+	//find root
+	A = djs_find_root(a);
+	B = djs_find_root(b);
+	//find which root have more child
+	if (djs[A] < djs[B]) {
+		djs[A] += djs[B];
+		djs[B] = A;
+	}
+	else {
+		djs[B] += djs[A];
+		djs[A] = B;
+	}
+}
+int main()
+{
+	int num;
+	cin >> num;
+
+	djs = new int[num];
+	for (int i = 0; i < num; ++i) {
+		djs[i] = -1;
+	}
+	R = new road*[num*(num + 1) / 2 + 1];
+
+	for (int i = 0; i < num; ++i) {
+		for (int j = 0; j < num; ++j) {
+			int w;
+			cin >> w;
+			if (j > i) {
+				push_heap(i, j, w);
+			}
+		}
+	}
+
+	int cnt = 0;
+	int sum = 0;
+	while (R_idx > 0) {
+		if (cnt > num) break;
+
+		road* r = pop_heap();
+		if (djs_find_root(r->A) != djs_find_root(r->B)) {
+			cnt++;
+			djs_combine(r->A, r->B);
+			sum += r->weight;
+			cout << r->weight << " ";
+		}
+	}
+
+	if (sum == 0)
+		sum = -1;
+	cout << sum << endl;
+}
