@@ -1,3 +1,13 @@
+class Tree :
+	def __init__(self, node):
+		self.node = node
+
+		self.tree = [0 for i in range(4 * node + 1)]
+
+	def init(self):
+		self.innerNodeStart =  
+
+
 if __name__ == '__main__':
     n = int(input())
     seq = []
