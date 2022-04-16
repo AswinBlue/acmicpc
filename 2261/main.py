@@ -1,7 +1,7 @@
-import heapq
-
-def distance(p1, p2):
+def distance_square(p1, p2):
     return (p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2
+
+DEBUG = 0
 
 if __name__ == "__main__":
     N = int(input())
@@ -10,54 +10,52 @@ if __name__ == "__main__":
     for i in range(N):
         x, y = map(int, input().split())
         save[i] = tuple((x, y))
-        
+
     # sort 'save' by 'x'
-    heapq.heapify(save)
+    save.sort(key=lambda e: e[0])
+    if DEBUG: print(save)
 
-    result = distance(save[0], save[1])
-    available = []
+    # set pointA
     idx = 0
-    
-    # add save[0], save[1] to 'available'
-    heapq.heappush(available, save[0][::-1]) # to make heap with 'y', reverse tuple
-    heapq.heappush(available, save[1][::-1])
+    pointA = save[idx]
+    x1, y1 = pointA
 
-    pointA = 0
+    # find another point and set pointB
+    for i in range(N):
+        if save[0] != save[i]:
+            idx2 = i
+            pointB = save[idx2]
+            break
 
-    for pointB in range(2, N):
-        x1, y1 = save[pointB]
+    available = [pointA, pointB]
+    min_dist = distance_square(pointA, pointB)
 
-        while pointA < pointB:
-            x2, y2 = save[pointA]
-            # check 'pointA' is qualified in regard of 'x'
-            if (x2 - x1) ** 2 > result: 
-                # if not qualified, check next
-                heapq.heappop(available)
-                pointA += 1
-            # if qualified, go to  next step
-            else:
-                break
+    # for all elements in 'save', compare x-axis distance between two point
+    # filter out non-prospective elements by comparing 'minimun-length' & 'x-axis distance'
+    # use sweep line algorithm
+    while idx2 < N:
+        pointB = save[idx2]
+        x2, y2 = pointB
+        dist = distance_square(pointA, pointB)
+        # if distance is 0, 'pointA' & 'pointB' is same point
+        if DEBUG:
+            print(idx, idx2, x1, y1, x2, y2)
+        if dist == 0:
+            idx2 += 1
+            continue
+        min_dist = min(min_dist, dist)
 
-        # check 'pointA' is qualified in regard of 'y' 
-        diff = int(result ** 0.5) + 1
-        y_start = 0
-        size = len(available) - 1
-
-        while available[y_start][0] <= pointB - diff and y_start < size:
-            y_start += 1 
-
-        y_end = y_start
-        while available[y_end][0] < pointB + diff and y_end < size:
-            y_end += 1 
-
-        # for all 'point' in y_start <= 'point' < y_end, recalculate 'result'
-        for i in range(y_start, y_end):
-            diff = distance(available[i][::-1], save[pointB])
-            if (diff < result):
-                result = diff
+        if DEBUG:
+            print(dist, min_dist, "\n", available)
+        if (x2 - x1) ** 2 <= min_dist:
+            available.append(save[idx2])
+            idx2 += 1
+        else:
+            idx += 1
+            pointA = save[idx]
 
     # print result
-    print(result)
+    print(min_dist)
 
 
 
