@@ -13,8 +13,8 @@ int main(void) {
     map<string, int> name;
     string tmp;
 
-    freopen ("in.txt", "r", stdin);
 #if DEBUG
+    freopen ("in.txt", "r", stdin);
     freopen ("out.txt", "w", stdout);
 #endif
     
