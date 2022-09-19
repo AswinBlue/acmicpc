@@ -1,7 +1,7 @@
 # https://www.acmicpc.net/problem/3665
 # 최종순위
 from sys import stdin, stdout
-DEBUG = False
+DEBUG = 0
 def Print(*args):
     if DEBUG:
         print(args)
