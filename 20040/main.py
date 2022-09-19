@@ -1,10 +1,11 @@
 # https://www.acmicpc.net/problem/20040
 # 사이클 게임
-from sys import stdin, stdout
+from sys import stdin, stdout, setrecursionlimit
 MIN_N = 3
 MAX_N = 500000
 MIN_M = 3
 MAX_M = 100000
+setrecursionlimit(MAX_M)
 
 def find_root(V, a):
     # find root
@@ -46,8 +47,7 @@ for m in range(1, M+1):
         V[A] += V[B]
         V[B] = A
     else:
-        V[B] += V
-        V[A] = A
-
+        V[B] += V[A]
+        V[A] = B
 
 stdout.writelines(str(result))
