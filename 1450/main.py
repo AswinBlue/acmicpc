@@ -3,8 +3,8 @@
 
 import enum
 from bisect import bisect, bisect_left, bisect_right
-# bisect : upper_bound
-# bisect_right : lower_bound
+# bisect : lower_bound
+# bisect_right : upper_bound
 
 MAX_N = 30
 MAX_C = 10**9
@@ -25,7 +25,7 @@ def get_weight_sum_list(N, C, P, idx, weight):
     return chosen + unchosen
 
 # 오름차순으로 정렬된 리스트에서 타겟 값 이하가 되는 인자 중 가장 큰 index를 반환
-def upper_bound(L, target):
+def lower_bound(L, target):
     length = len(L)
     # binary search
     start = 0
@@ -67,7 +67,7 @@ right.sort()  # 이분검색을 위해 정렬
 for l in left:
     # C - l >= r 인 right의 인자 r을 찾는다.
     # 찾은 인자의 index+1 이 좌측의 무게가 l 인 경우에 우측 물건들을 선택할 수 있는 경우의 갯수
-    index_r = upper_bound(right, C - l)
+    index_r = lower_bound(right, C - l)
     result += index_r
 
 print(result)
