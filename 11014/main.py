@@ -1,5 +1,5 @@
-# https://www.acmicpc.net/problem/1014
-# 컨닝
+# https://www.acmicpc.net/problem/11014
+# 컨닝2
 
 import math
 
@@ -110,11 +110,8 @@ def method1(N, M, table):
     return total_seat - invalid_seat
 
 
-# 방법 2. Dynamic programming
-# DP만으로는 timeout이 발생할 계산 분량이지만, bit masking을 곁들이면 시간 안에 해결이 가능하다.
-# 단서 1. n행까지만 고려하여 최대로 앉을 수 있는 인원 x_n을 찾았다면, n+1행 까지 고려할 때는 n행까지 고려한 결과 x에 얼마를 더 놓을수 있는지 체크하면 된다. (DP로 처리 가능)
-# 단서 2. 자리 배치를 행 단위로 끊어 봤을 때, 컨닝을 할 수 있는 자리는 해당 행과 그 이전 행이다. (DP 계산시 n-1만 고려하면 됨)
-# 단서 3. 열의 길이는 최대 10이므로, 한 행의 자리 배치를 bit 연산을 사용하여 int 형으로 표현할 수 있다. (bit로 표시 불가능하면 해결 불가)
+# 방법 2. Dynamic programming (안됨)
+# 컨닝1(1014번 문제) 에서는 가능했지만 MAX_N과 MAX_M이 증가하며 사용할 수 없게 된 방법이다. 참고만 한다.
 def method2(N, M, table):
     # 1. 한 행만 고려했을 때, 컨닝을 할 수 없는 배치와 그 배치에서 선택된 책상의 갯수를 저장한다.
     candidate = []
@@ -187,7 +184,6 @@ def method2(N, M, table):
     return max(DP[N-1])
 
 
-
 if __name__ == '__main__':
     # get input
     testCase = int(input())
@@ -198,8 +194,5 @@ if __name__ == '__main__':
             A = input()
             table[j] = list(A)
         Print('table: ', *table)
-        if i % 2 == 0:
-            result = method1(N, M, table)
-        else:
-            result = method2(N, M, table)
+        result = method1(N, M, table)
         print(result)
