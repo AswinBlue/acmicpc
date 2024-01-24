@@ -1,3 +1,18 @@
-while True:
-    x1, y1, x2, y2 = map(int, input().split())
-    print(x1**2 + x2**2, y1**2 + y2**2, (x1-x2)**2, (y1-y2)**2)
+FNAME = '2261\in10.txt'
+N = 100_000
+
+f = open(FNAME, 'w')
+f.write(f'{N}\n')
+
+X = -10_000
+Y = -10_000
+flag = 1
+for n in range(N):
+    f.write(f'{X} {Y}\n')
+    X += flag
+    Y += flag
+    flag *= -1
+    X *= -1
+    Y *= -1
+
+f.close

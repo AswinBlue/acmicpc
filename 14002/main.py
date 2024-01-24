@@ -1,8 +1,9 @@
 # https://www.acmicpc.net/problem/14002
 # 가장 긴 증가하는 부분 수열 4
 from bisect import bisect_left
+# REF:
 # bisect_left : lower bound (x보다 같거나 큰 수들 중 최좌측 값의 위치)
-# bisect_right : upper bound (x보다 같거나 작은 수들 중 최우측 값의 위치)
+# bisect_right : upper bound (x보다 큰 수들 중 최좌측 값의 위치)
 # bisect : lower bound (lower bound 를 찾았는데 동일 값이 존재할 경우 최우측 값의 위치)
 MAX_N = 1000
 MAX_NUM = 1000
