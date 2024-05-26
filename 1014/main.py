@@ -1,6 +1,7 @@
 # https://www.acmicpc.net/problem/1014
 # 컨닝
 
+<<<<<<< HEAD
 import math
 
 MAX_N = 10
@@ -203,3 +204,74 @@ if __name__ == '__main__':
         else:
             result = method2(N, M, table)
         print(result)
+=======
+BROKEN = 'x'
+EMPTY = '.'
+
+DEBUG = 1
+def Print(*args):
+    if DEBUG:
+        print(*args)
+    
+T = int(input())
+for t in range(T):
+    N, M = map(int, input().split())
+    desk = []
+    for n in range(N):
+        desk.append(input())
+
+    # >접근 전략
+    # Dynamic programming으로 모든 경우를 고려한다.
+    # DP[i][j][0] 에는 (i, j), (i-1, j) 영역에 사람이 없을 경우 iXj 크기의 영역에서 얻을 수 있는 최대값을 저장한다.
+    # DP[i][j][1] 에는 (i, j) 또는 (i-1, j) 영역에 사람이 있을 경우 iXj 크기의 영역에서 얻을 수 있는 최대값을 저장한다.
+
+    DP = [[[0, 0] for _ in range(M)] for _ in range(N)]
+    # 초기값 세팅
+    if desk[0][0] == EMPTY:
+        DP[0][0][1] = 1
+
+    # (i,0) 열 세팅
+    for i in range(1, N):
+        DP[i][0][0] = max(DP[i-1][0][1], DP[i-1][0][0])
+        if desk[i][0] == EMPTY:
+            DP[i][0][1] = max(DP[i-1][0][1] + 1, DP[i][0][0])
+        else:
+            DP[i][0][1] = DP[i][0][0]
+    # (0,j) 행 세팅  
+
+    for j in range(1, M):
+        DP[0][j][0] = max(DP[0][j-1][0], DP[0][j-1][1])
+        if desk[0][j] == EMPTY:
+            DP[0][j][1] = max(DP[0][j-1][0] + 1, DP[0][j][0])
+        else:
+            DP[0][j][1] = DP[0][j][0]
+
+    # 나머지 값 순회
+    for i in range(1, N):
+        for j in range(1, M):
+            DP[i][j][0] = max(DP[i][j-1][0], DP[i][j-1][1], DP[i-1][j][0])
+
+            A = max(DP[i-1][j]) - max(DP[i-1][j-1])
+            B = max(DP[i][j-1]) - max(DP[i-1][j-1])
+            C = max(A, B) + max(DP[i-1][j-1])
+
+            if desk[i][j] == EMPTY:
+                DP[i][j][1] = C + 1
+
+
+            # if desk[i][j] == EMPTY and desk[i-1][j] == EMPTY:
+            #     DP[i][j][1] = max(DP[i][j][0], DP[i][j-1][0] + 2, DP[i][j-1])
+            #     Print(i, j, '+2')
+            # elif desk[i][j] == EMPTY:
+            #     DP[i][j][1] = max(DP[i][j][0], DP[i][j-1][0] + 1)
+            #     Print(i, j, '+1')
+            # elif desk[i-1][j] == EMPTY:
+            #     DP[i][j][1] = max(DP[i][j][0], DP[i][j-1][0] + 1)
+            #     Print(i, j, '+1_')
+            # else:
+            #     DP[i][j][1] = DP[i][j][0]
+            #     Print(i, j, '+0')
+            
+    Print('\tTC {} : {}'.format(t+1,  DP))
+    
+>>>>>>> a7d0eec (12904 / A와 B)
