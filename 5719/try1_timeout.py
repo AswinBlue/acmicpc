@@ -2,7 +2,6 @@
 # 거의 최단경로
 
 import heapq
-from collections import deque, defaultdict
 
 MAX_N = 500
 MAX_M = 10000
@@ -29,47 +28,30 @@ def dijkstra(graph, parent, cost):
 
         # node 에 방문한 적이 없다면 진행
 
-        for next, weight in graph[node]:
-            # node 에서 갈 수 있는 모든 edge에 대해
-            # S 에서 node 까지 거리와 node 에서 next 까지 거리를 더한 값과 S 에서 next 까지 거리 비교
-            new_cost = cost[node] + weight
-            if cost[next] == INVALID or new_cost < cost[next]:
-                # 값 갱신
-                cost[next] = new_cost
-                heapq.heappush(H, (cost[next], next))  # heap 에 값 갱신. 어차피 기존보다 더 작은 값이 들어가기 때문에 기존 값을 제거하지 않아도 됨
-                parent[next] = [node]  # 경로 저장
-            elif new_cost == cost[next]:  # 최단 경로가 여러 개일 경우
-                parent[next].append(node)
-
-def remove_shortest_path_edges(graph, parent):
-    global N, S, D
-    # BFS로 역추적하여 최단경로에 포함된 모든 간선을 제거
-    queue = deque([D])
-    visited = [False] * N
-    while queue:
-        node = queue.popleft()
-        if visited[node]:
-            continue
-        visited[node] = True
-        for prev in parent[node]:
-            # edge 제거
-            graph[prev] = [(n, w) for n, w in graph[prev] if n != node]
-            queue.append(prev)
-
-
+        for next in range(N):
+            # node 에서 next 까지 이동이 가능하다면
+            if graph[node][next] != INVALID:
+                # S 에서 node 까지 거리와 node 에서 next 까지 거리를 더한 값과 S 에서 next 까지 거리 비교
+                new_cost = cost[node] + graph[node][next]
+                if cost[next] == INVALID or new_cost < cost[next]:
+                    # 값 갱신
+                    cost[next] = new_cost
+                    heapq.heappush(H, (cost[next], next))  # heap 에 값 갱신. 어차피 기존보다 더 작은 값이 들어가기 때문에 기존 값을 제거하지 않아도 됨
+                    parent[next] = [node]  # 경로 저장
+                elif new_cost == cost[next]:  # 최단 경로가 여러 개일 경우
+                    parent[next].append(node)
+                
 if __name__ == '__main__':
     while True:
         N, M = map(int, input().split())
         if N == M == 0:
             break
-        graph = defaultdict(list)
-
+        graph = [[INVALID for _ in range(N)] for _ in range(N)]
 
         S, D = map(int, input().split())
         for m in range(M):
             u, v, p = map(int, input().split())
-            graph[u].append((v, p))
-
+            graph[u][v] = p
         
         parent = [[] for _ in range(N)]  # 경로를 저장할 배열
         cost = [INVALID for _ in range(N)]  # 거리를 저장할 배열
@@ -88,7 +70,13 @@ if __name__ == '__main__':
                 break
 
             # 최단경로 제거
-            remove_shortest_path_edges(graph, parent)
+            stack = [D]
+            while stack:
+                node = stack.pop()
+                for prev in parent[node]:
+                    if graph[prev][node] != INVALID:
+                        graph[prev][node] = INVALID
+                        stack.append(prev)
 
             # dijkstra 한번 더 동작
             parent = [None for _ in range(N)]  # 경로를 저장할 배열
