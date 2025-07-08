@@ -37,7 +37,7 @@
 # - X축에 대해서는 bisect 로 이분탐색 연산을 이용하여 연산시간을 최적화 한다.
 # - 
 
-DEBUG = 0
+DEBUG = 1
 
 from collections import deque
 from math import sqrt
@@ -96,8 +96,8 @@ if __name__ == "__main__":
     save.sort(key=operator.itemgetter(0, 1))  # REF: 0번 index 우선 정렬, 이후 0번 index 정렬. lambda x: (x[0], x[1]) 보다 함수호출이 적어 빠름 (https://stackoverflow.com/questions/4233476/sort-a-list-by-multiple-attributes)
     Print(save)
 
-    # exception, if no more than two unique points
-    if unique_N < 2:
+    # exception, there is a same coordinate
+    if unique_N != len(save):
         print(0)
         exit(0)
     
@@ -107,8 +107,8 @@ if __name__ == "__main__":
     promising = dict()
     promising[0] = save[0]
     promising[1] = save[1] # push item to promising pool
-    sorted(promising.items(), key=lambda x: x[1][1])  # y축에 대해 정렬
-    # REF: sorted의 return은 list형태이다. 
+    # sorted(promising.items(), key=lambda x: x[1][1])  # y축에 대해 정렬
+    # REF: sorted 의 return은 list형태이다. 
     # promising = save[idx:idx2]. I will remove add add promising point by moving 'idx' and 'idx2'
     powed_min_dist = distance_square(save[0], save[1])  # get distance of first two points
     min_dist = sqrt(powed_min_dist)
@@ -122,7 +122,7 @@ if __name__ == "__main__":
         # filter out non-prospective elements by comparing 'minimun-length' & 'x-axis distance'
         target = save[idx2]
         x, y = target
-        print(promising)
+        # Print(promising)
         while idx < idx2:
             if abs(x - save[idx][0]) >= min_dist:
                 # check 'x' axis and remove unpromising points
@@ -133,9 +133,9 @@ if __name__ == "__main__":
                 break  # if 'idx' is promising, 'idx + a' will promising too
 
         # now, save[idx:idx2] is promising
-
-        lower_bound = bisect_right(promising.items(), y - min_dist, key=operator.itemgetter(1)) # find lower bound
-        upper_bound = bisect_right(promising.items(), y + min_dist, key=operator.itemgetter(1)) # find upper bound
+        y_sorted_list = sorted(promising.items(), key=lambda x: x[1][1])  # y축에 대해 정렬
+        lower_bound = bisect_right(y_sorted_list, y - min_dist, key=operator.itemgetter(1)) # find lower bound
+        upper_bound = bisect_right(y_sorted_list, y + min_dist, key=operator.itemgetter(1)) # find upper bound
         # REF: pair 를 bisect로 비교하는 방법 (https://stackoverflow.com/questions/20908047/using-bisect-in-a-list-of-tuples)
 
         # filter promising points by 'y' axis distance
@@ -143,7 +143,7 @@ if __name__ == "__main__":
         # check distance from all 'promising point' to 'target'
         for i in range(lower_bound, upper_bound):
             # check distance and update min_dist
-            dist = distance_square(promising.items()[i], target)
+            dist = distance_square(y_sorted_list[i], target)
             powed_min_dist = min(powed_min_dist, dist)  # update powed_min_dist
             min_dist = sqrt(powed_min_dist)  # update min_dist
                 
